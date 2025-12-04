@@ -100,7 +100,7 @@ async def logout(response: Response):
 @app.delete("/auth/delete_user")
 async def delete_user(user: User):
     async with aiohttp.ClientSession() as session:
-        async with session.post(
+        async with session.delete(
             "http://127.0.0.1:8000/database/delete_user",
             json = {
                 "email": user.email,

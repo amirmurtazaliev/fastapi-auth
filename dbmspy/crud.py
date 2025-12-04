@@ -1,7 +1,7 @@
 from .database import sessionlocal, Password
 from sqlalchemy import select
 from .models import User, CodeConfirm
-
+from sqlalchemy.exc import NoResultFound
 pwdacts = Password()
 
 class UserActions:
@@ -45,19 +45,37 @@ class UserActions:
     
     @staticmethod
     async def delete_user(email: str, password: str):
-        deletable_user = User(
-            email=email,
-            password=password
-        )
+        print(f"DEBUG: Starting delete_user for {email}")
         
-        if UserActions.find_user(email, password)["user_id"] is not None:
+        # ВАРИАНТ 1: Удаление через execute (рекомендуется для async)
+        try:
             async with sessionlocal() as session:
-                session.delete(deletable_user)
+                from sqlalchemy import delete
+                
+                # Создаем DELETE запрос
+                stmt = delete(User).where(
+                    User.email == email
+                )
+                
+                # Выполняем запрос
+                result = await session.execute(stmt)
+                
+                # Получаем количество удаленных строк
+                rows_deleted = result.rowcount
+                print(f"DEBUG: Rows deleted: {rows_deleted}")
+                
+                # Коммитим изменения
                 await session.commit()
-                return {"msg":"user deleted"}
-        return {"msg":"user not found"}
-            
-
+                
+                if rows_deleted > 0:
+                    return {"success": True, "msg": "user deleted", "rows": rows_deleted}
+                else:
+                    return {"success": False, "msg": "User not found or credentials incorrect"}
+                    
+        except Exception as e:
+            print(f"DEBUG: Error: {str(e)}")
+            return {"success": False, "msg": f"Error: {str(e)}"}
+        
 class CodeActions:
     @staticmethod
     async def add_conf_code(email:str, code:str):
