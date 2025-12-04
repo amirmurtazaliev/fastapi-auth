@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .database import UserActions, CodeActions
+from .crud import UserActions, CodeActions
 from .schemes import User, UserEmail, CodeConfirm
 import uvicorn 
 

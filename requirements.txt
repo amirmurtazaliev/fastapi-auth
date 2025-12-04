@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+uvicron
+pydantic
+pydantic[email]
+pydantic-settings
+sqlalchemy
+aiohttp
+passlib[bcrypt]
+bcrypt==4.0.1
+authx

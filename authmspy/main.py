@@ -3,7 +3,7 @@ import aiohttp
 import random
 from fastapi import FastAPI,Response,HTTPException
 from .schemes import User,UserEmail,UserWithCode
-from .auth import security,authconfig
+from .auth import security, authconfig
 from fastapi.middleware.cors import CORSMiddleware
 from .verif import send_confirmation_code
 
@@ -23,7 +23,7 @@ async def check_email(user_email:UserEmail):
         async with session.post(
             "http://127.0.0.1:8000/database/check_email",
             json = {
-                "email":user_email.email
+                "email": user_email.email
             }
         ) as response:
             data = await response.json()
@@ -33,8 +33,8 @@ async def check_email(user_email:UserEmail):
             async with session.post(
                 "http://127.0.0.1:8000/database/add_confirm_code",
                 json = {
-                    "email":user_email.email,
-                    "code":code
+                    "email": user_email.email,
+                    "code": code
                 } 
             ) as response:
                 return await response.json()
@@ -47,17 +47,18 @@ async def register(user:UserWithCode):
         async with session.post(
             "http://127.0.0.1:8000/database/find_confirm_code",
             json = {
-                "email":user.email
+                "email": user.email
             }
         ) as response:
             data = await response.json()
-            if data["conf_code"] != user.code:
+        if data["conf_code"] != user.code:
                 return {"msg":"неверный код"}
+            
         async with session.post(
             "http://127.0.0.1:8000/database/add_user",
             json = {
-                "email":user.email,
-                "password":user.password
+                "email": user.email,
+                "password": user.password
             }
         ) as response:
             return await response.json()
@@ -68,13 +69,14 @@ async def login(user:User, createcookie:Response):
         async with session.post(
             "http://127.0.0.1:8000/database/check_user",
             json={
-                "email":user.email,
-                "password":user.password
+                "email": user.email,
+                "password": user.password
             }
         ) as response:
             data = await response.json()
-            if data["user_id"] is not None:
-                token=security.create_access_token(uid=str(data["user_id"]))
-                createcookie.set_cookie(authconfig.JWT_ACCESS_COOKIE_NAME,token)
-                return 0
-            raise HTTPException(status_code=401,detail="incorrect email or password")
+        print(data)
+        if data["user_id"] is not None:
+            token=security.create_access_token(uid=str(data["user_id"]))
+            createcookie.set_cookie(authconfig.JWT_ACCESS_COOKIE_NAME,token)
+            return data
+        raise HTTPException(status_code=401,detail="incorrect email or password")

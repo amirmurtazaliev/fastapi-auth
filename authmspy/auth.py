@@ -1,5 +1,4 @@
 from authx import AuthX, AuthXConfig
-from passlib.context import CryptContext
 import config
 
 authconfig = AuthXConfig()
@@ -10,7 +9,3 @@ authconfig.JWT_COOKIE_CSRF_PROTECT = False
 
 security=AuthX(config=authconfig)
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-def get_password_hash(self,password: str) -> str:
-    return pwd_context.hash(password)

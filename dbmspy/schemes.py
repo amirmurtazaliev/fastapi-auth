@@ -5,7 +5,7 @@ class Base(BaseModel):
 
 class User(Base):
     email:EmailStr = Field(max_length=50)
-    password:str = Field(min_length=5,max_length=30)
+    password:str
     
 class UserEmail(Base):
     email:EmailStr = Field(max_length=50)
