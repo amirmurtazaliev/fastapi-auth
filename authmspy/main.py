@@ -68,7 +68,7 @@ async def login(user:User, createcookie:Response):
     async with aiohttp.ClientSession() as session:
         async with session.post(
             "http://127.0.0.1:8000/database/check_user",
-            json={
+            json = {
                 "email": user.email,
                 "password": user.password
             }
@@ -80,3 +80,16 @@ async def login(user:User, createcookie:Response):
             createcookie.set_cookie(authconfig.JWT_ACCESS_COOKIE_NAME,token)
             return data
         raise HTTPException(status_code=401,detail="incorrect email or password")
+
+@app.post("/auth/delete_user")
+async def delete_user(user: User):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(
+            "http://127.0.0.1:8000/database/delete_user",
+            json = {
+                "email": user.email,
+                "password": user.password
+            }
+        ) as response:
+            data = await response.json()
+        return data
