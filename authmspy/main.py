@@ -1,6 +1,6 @@
 import aiohttp
-import random
-from fastapi import Depends, FastAPI,Response,HTTPException
+import random 
+from fastapi import Depends, FastAPI, Request,Response,HTTPException
 from fastapi.responses import JSONResponse
 from .schemes import User,UserEmail,UserWithCode
 from .auth import security, authconfig
@@ -81,21 +81,10 @@ async def login(user:User, createcookie:Response):
             return data
         raise HTTPException(status_code=401,detail="incorrect email or password")
 
-@app.post("/auth/logout",
-          dependencies=[Depends(
-              security.access_token_required)])
-async def logout(response: Response):
-    try:
-        response.delete_cookie(authconfig.JWT_ACCESS_COOKIE_NAME)
-        return JSONResponse(
-            status_code=200,
-            content={"message": "Successfully logged out"}
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, 
-            detail=f"Logout failed: {str(e)}"
-        )
+@app.post("/auth/logout")
+async def logout(request: Request, response: Response):
+    response.delete_cookie(key="my_access_token")
+    return {'message': 'Пользователь успешно вышел из системы'}
 
 @app.delete("/auth/delete_user")
 async def delete_user(user: User):
