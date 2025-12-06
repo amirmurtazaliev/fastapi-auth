@@ -4,13 +4,13 @@ class Base(BaseModel):
     pass 
 
 class User(Base):
-    email:EmailStr = Field(max_length=50)
-    password:str
+    email: EmailStr = Field(max_length=50)
+    password: str
     
 class UserEmail(Base):
-    email:EmailStr = Field(max_length=50)
+    email: EmailStr = Field(max_length=50)
     
 class CodeConfirm(Base):
-    email:EmailStr = Field(max_length=50)
-    code:str
+    email: EmailStr = Field(max_length=50)
+    code: str 
     

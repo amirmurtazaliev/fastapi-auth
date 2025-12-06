@@ -50,7 +50,7 @@ async def check_email(user_email: UserEmail):
 async def add_code(params: CodeConfirm):
     result = await codeacts.add_conf_code(
         email = params.email,
-        code = params.code
+        code = str(params.code)
     )
     return result
 
